@@ -66,7 +66,6 @@ python backend/RAG.py
 	- Builds a simple RAG chain using a `ChatPromptTemplate` and an `OllamaLLM` and runs a test query: "What is attention mechanism?".
 
 **Security & Notes**
-- Do not commit real API keys. The repository currently contained an example `.env` with a key; remove any real keys and rotate them immediately if accidentally committed.
 - The `OllamaLLM` requires Ollama running locally and the named model available (`deepseek-r1:8b` in the example). If you don't have Ollama, replace the LLM with an OpenAI/other LLM wrapper supported by LangChain.
 - Package names for some LangChain integrations vary; if installation fails, check the package's PyPI name or install `langchain` and the specific integration package.
 
@@ -78,6 +77,4 @@ python backend/RAG.py
 - Add a proper CLI or small Flask/FastAPI server to query the chain interactively.
 - Add unit tests for the document loading & splitting logic.
 - Add a small sanity-check script to verify connectivity to Pinecone and Ollama.
-
-If you want, I can also generate a small sample `attention.pdf` or a simple Flask API wrapper to query the RAG chain interactively. Tell me which you prefer.
 
