@@ -1,0 +1,17 @@
+python-dotenv
+pinecone-client
+langchain
+langchain-ollama
+langchain-huggingface
+langchain-pinecone
+langchain-community
+langchain-text-splitters
+transformers
+sentence-transformers
+pypdf
+
+# Notes:
+# - Some of the `langchain_...` integration packages may have different PyPI names
+#   depending on the distribution. If pip cannot find a package, try installing
+#   the core `langchain` package and then the specific integration (or check
+#   the project's README / PyPI page for the correct name).

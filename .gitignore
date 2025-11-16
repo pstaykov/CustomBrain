@@ -1,0 +1,62 @@
+# -------------------------
+# PYTHON
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+*.db
+*.log
+
+# Virtual environment
+venv/
+.env/
+.env.*
+
+
+# -------------------------
+# ENV & SECRETS
+# -------------------------
+.env
+*.env
+*.key
+*.secret
+
+
+# Vectorstore / embedding caches
+chroma/
+faiss/
+*.faiss
+*.pkl
+
+# Model output caches
+models/
+*.bin
+*.gguf
+*.safetensors
+
+
+# -------------------------
+# IDEs & EDITORS
+# -------------------------
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+
+# -------------------------
+# OS FILES
+# -------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
