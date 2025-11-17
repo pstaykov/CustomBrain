@@ -95,6 +95,35 @@
                 </button>
                 <div id="uploadStatus" class="status-message"></div>
             </div>
+
+            <div class="card manage-card">
+                <div class="manage-card-header">
+                    <div>
+                        <h3><i class="fas fa-database"></i> Manage Index & Files</h3>
+                        <p class="card-subtitle">See existing vector indexes and uploaded file artifacts</p>
+                    </div>
+                    <button id="refreshListsBtn" class="btn-secondary btn-refresh" title="Refresh lists">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <div class="manage-grid">
+                    <div>
+                        <h4><i class="fas fa-cube"></i> Existing Indexes</h4>
+                        <div id="indicesList" class="indices-list">
+                            <p class="small-muted">Loading indexes...</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4><i class="fas fa-file"></i> Uploaded Files (recent)</h4>
+                        <div id="uploadedFilesList" class="uploaded-files">
+                            <p class="small-muted">No uploaded files found.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </section>
 
