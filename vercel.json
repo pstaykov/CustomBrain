@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "buildCommand": "pip install -r backend/requirements.txt",
+  "framework": "fastapi",
+  "public": true,
+  "functions": {
+    "backend/main.py": {
+      "memory": 3008,
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/.*",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "dest": "backend/main.py",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/index.html"
+    }
+  ],
+  "env": {
+    "PINECONE_API_KEY": "@pinecone_api_key",
+    "OLLAMA_API_BASE": "@ollama_api_base"
+  },
+  "envs": {
+    "preview": {
+      "PINECONE_API_KEY": "@pinecone_api_key",
+      "OLLAMA_API_BASE": "@ollama_api_base"
+    },
+    "production": {
+      "PINECONE_API_KEY": "@pinecone_api_key",
+      "OLLAMA_API_BASE": "@ollama_api_base"
+    }
+  }
+}
