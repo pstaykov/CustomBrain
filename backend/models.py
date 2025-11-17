@@ -13,3 +13,9 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
 
+class ChatRequest(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    response: str
+

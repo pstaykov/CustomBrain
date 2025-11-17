@@ -1,8 +1,12 @@
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnableMap, RunnablePassthrough
 from langchain_ollama import OllamaLLM
-from ..config import *
+from ..config import LLM_MODEL
 
+
+# ----------------------------------------------------
+# LLM Initialization
+# ----------------------------------------------------
 def initialize_llm():
     return OllamaLLM(
         model=LLM_MODEL,
@@ -10,43 +14,79 @@ def initialize_llm():
         streaming=False
     )
 
-llm = initialize_llm()
 
-def create_rag_chain(vector_store):
+# ----------------------------------------------------
+# RAG Chain
+# ----------------------------------------------------
+def create_rag_chain(vector_store, llm):
+
+    # Pinecone retriever
     retriever = vector_store.as_retriever(
         search_type="similarity",
-        search_kwargs={"k": 3}
+        search_kwargs={"k": 3},
     )
 
-    def join_docs(doc_list):
-        return "\n\n".join([d.page_content for d in doc_list])
-    
-    prompt_template = ChatPromptTemplate.from_messages([
+    # ----------------------------------------------
+    # Query rewriting LLM
+    # ----------------------------------------------
+    query_prompt = ChatPromptTemplate.from_messages([
+        ("system", "Rewrite the user question into a short, highly relevant search query."),
+        ("human", "Question: {question}\n\nSearch query:")
+    ])
+    query_generator = query_prompt | llm
+
+    # Extract real text from LLM output
+    def generate_query(question: str) -> str:
+        raw = query_generator.invoke({"question": question})
+
+        # Handle Ollama return types
+        if isinstance(raw, dict):
+            try:
+                raw = raw["message"]["content"]
+            except:
+                raw = str(raw)
+
+        return str(raw).strip()
+
+    # Join retrieved docs
+    def join_docs(docs):
+        return "\n\n".join([d.page_content for d in docs])
+
+    # ----------------------------------------------
+    # Final Answer Prompt
+    # ----------------------------------------------
+    answer_prompt = ChatPromptTemplate.from_messages([
         ("human", """
-        You are a helpful assistant answering questions **only** using the context below.
-        If the answer is not clearly contained in the context, say: "I don't know based on the provided document."
+You are a helpful assistant answering questions **only** using the context below.
+If the answer is not clearly contained in the context, say: "I don't know based on the provided document."
 
-        - Prefer to paraphrase in your own words.
-        - If helpful, quote short phrases from the context.
-        - Do NOT explain your reasoning step-by-step.
+Context:
+{context}
 
-        Context:
-        {context}
+Question: {question}
 
-        Question: {question}
-
-        Answer:
-            """)])
-
+Answer:
+""")
+    ])
+    # Full RAG Chain
     rag_chain = (
-        {
+        # Step 1: Rewrite Query
+        RunnableMap({
+            "search_query": lambda x: generate_query(x["question"]),
+            "question": lambda x: x["question"],
+        })
+        |
+        # Step 2: Retrieve from Pinecone
+        RunnableMap({
             "context": lambda x: join_docs(
-                retriever.invoke(x["question"])
+                retriever.invoke(x["search_query"])
             ),
-            "question": lambda x: x["question"]
-        }
-        | prompt_template
+            "question": lambda x: x["question"],
+        })
+        |
+        # Step 3: Answer using context
+        answer_prompt
         | llm
     )
-    
+
     return rag_chain
